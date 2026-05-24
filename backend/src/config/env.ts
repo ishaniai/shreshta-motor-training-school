@@ -41,5 +41,5 @@ export const env = {
   twilioWhatsappFrom:
     process.env.TWILIO_WHATSAPP_FROM?.trim() || "whatsapp:+14155238886",
   notifyWhatsappTo:
-    process.env.NOTIFY_WHATSAPP_TO?.trim() || "whatsapp:+918010501606",
+    process.env.NOTIFY_WHATSAPP_TO?.trim() || "whatsapp:+918851127205",
 };
