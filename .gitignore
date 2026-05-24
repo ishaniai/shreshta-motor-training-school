@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Environment (never commit secrets)
+.env
+.env.local
+.env.*.local
+mobile/.env
+backend/.env
+
+# Expo / React Native
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+backend/dist/
+*.apk
+*.aab
+
+# IDE
+.idea/
+.vscode/

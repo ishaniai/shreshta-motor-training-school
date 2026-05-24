@@ -1,0 +1,27 @@
+Shreshta Motor Training School — official app for new students to register and sign in for driving training.
+
+FEATURES
+• Easy online registration with secure account creation
+• Login with username or email
+• Choose training interest: 2 Wheeler, 4 Wheeler, or Both
+• Driving license details capture when applicable
+• Dark, easy-to-use interface designed for mobile
+
+WHO IS THIS FOR?
+Anyone aged 18+ who wants to enroll for motor training at Shreshta Motor Training School.
+
+REGISTRATION INCLUDES
+• Personal and contact details
+• Address (all Indian states and union territories)
+• Date of birth verification (18+ required)
+• Optional driving license information
+• Training preference selection
+
+SECURITY
+• Passwords are securely hashed
+• Data transmitted over HTTPS
+• Privacy policy available in-app listing
+
+After registration, school administrators are notified. Log in anytime to access your training dashboard. More features coming soon!
+
+Contact Shreshta Motor Training School for support and in-person training schedules.
