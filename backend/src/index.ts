@@ -32,5 +32,6 @@ app.use((_req, res) => {
 const host = "0.0.0.0";
 
 app.listen(env.port, host, () => {
-  console.log(`Shreshta API listening on http://${host}:${env.port}`);
+  console.log(`✅ Shreshta API listening on http://localhost:${env.port}`);
+  console.log(`📡 API accessible at http://${host}:${env.port}`);
 });

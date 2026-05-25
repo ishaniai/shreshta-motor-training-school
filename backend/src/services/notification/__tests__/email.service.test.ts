@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendWithResend } from '../email.service';
+import { sendRegistrationNotification } from '../email.service';
 
 describe('Email Service', () => {
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe('Email Service', () => {
 
   describe('sendWithResend', () => {
     it('should have required parameters', () => {
-      expect(sendWithResend).toBeDefined();
+      expect(sendRegistrationNotification).toBeDefined();
     });
 
     it('should return an object with email properties', async () => {
