@@ -13,7 +13,7 @@ jobs:
   # ============ BACKEND JOB ============
   backend:
     name: Backend Build & Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     strategy:
       matrix:
@@ -105,7 +105,7 @@ jobs:
   # ============ MOBILE JOB ============
   mobile:
     name: Mobile Build & Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     strategy:
       matrix:
@@ -175,7 +175,7 @@ jobs:
   # ============ INTEGRATION TESTS ============
   integration:
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [backend, mobile]
     if: success()
     
@@ -223,7 +223,7 @@ jobs:
   # ============ CODE QUALITY ============
   quality:
     name: Code Quality Checks
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
       - name: Checkout Code
@@ -236,8 +236,21 @@ jobs:
 
       - name: Check for Secrets
         run: |
-          if grep -r "SUPABASE_URL\|JWT_SECRET\|RESEND_API_KEY" backend/src mobile/src --include="*.ts" --include="*.tsx" 2>/dev/null; then
+          # Look for hardcoded secrets: exclude process.env, requireEnv, Error messages, console logs
+          if grep -rE "(SUPABASE_URL|JWT_SECRET|RESEND_API_KEY)" backend/src mobile/src --include="*.ts" --include="*.tsx" 2>/dev/null | \
+             grep -v "process\.env" | \
+             grep -v "requireEnv" | \
+             grep -v "secrets\." | \
+             grep -v "Error" | \
+             grep -v "is not configured" | \
+             grep -q .; then
             echo "❌ Secrets found in source code!"
+            grep -rE "(SUPABASE_URL|JWT_SECRET|RESEND_API_KEY)" backend/src mobile/src --include="*.ts" --include="*.tsx" 2>/dev/null | \
+              grep -v "process\.env" | \
+              grep -v "requireEnv" | \
+              grep -v "secrets\." | \
+              grep -v "Error" | \
+              grep -v "is not configured"
             exit 1
           else
             echo "✅ No hardcoded secrets found"
@@ -263,7 +276,7 @@ jobs:
   # ============ DEPLOYMENT SUMMARY ============
   summary:
     name: Build Summary
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [backend, mobile, quality]
     if: always()
     
@@ -302,7 +315,7 @@ jobs:
   # ============ OPTIONAL: DEPLOY STEP ============
   # deploy:
   #   name: Deploy to Production
-  #   runs-on: ubuntu-latest
+  #   runs-on: self-hosted
   #   needs: [backend, mobile, quality]
   #   if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.backend.result == 'success' && needs.mobile.result == 'success'
     
