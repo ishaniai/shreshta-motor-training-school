@@ -22,8 +22,7 @@
       "versionCode": 1
     },
     "plugins": [
-      "expo-router",
-      "expo-asset"
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
