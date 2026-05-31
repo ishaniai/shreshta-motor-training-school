@@ -12,6 +12,6 @@ export const supabaseAdmin = createClient(env.supabaseUrl, env.supabaseServiceRo
     persistSession: false,
   },
   realtime: {
-    transport: ws,
+    transport: ws as any,
   },
 });
