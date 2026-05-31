@@ -1,13 +1,12 @@
 name: CI/CD Pipeline - Shreshta Motor Training
 
 on:
-  push: 
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
 env:
-  NODE_VERSION: "20"
+  REQUIRED_NODE_VERSION: "20"
 
 jobs:
   # ============ BACKEND JOB ============
@@ -25,7 +24,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check existing Node.js version
+        id: node-check
+        run: |
+          if command -v node >/dev/null 2>&1; then
+            CURRENT_VERSION=$(node -v | sed 's/^v//')
+            echo "current_node_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "current_node_version=none" >> $GITHUB_OUTPUT
+          fi
+          echo "required_node_version=${REQUIRED_NODE_VERSION}" >> $GITHUB_OUTPUT
+
       - name: Setup Node.js ${{ matrix.node-version }}
+        if: steps.node-check.outputs.current_node_version != steps.node-check.outputs.required_node_version
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -117,7 +128,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check existing Node.js version
+        id: node-check
+        run: |
+          if command -v node >/dev/null 2>&1; then
+            CURRENT_VERSION=$(node -v | sed 's/^v//')
+            echo "current_node_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "current_node_version=none" >> $GITHUB_OUTPUT
+          fi
+          echo "required_node_version=${REQUIRED_NODE_VERSION}" >> $GITHUB_OUTPUT
+
       - name: Setup Node.js ${{ matrix.node-version }}
+        if: steps.node-check.outputs.current_node_version != steps.node-check.outputs.required_node_version
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -184,12 +207,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Check existing Node.js version
+        id: node-check
+        run: |
+          if command -v node >/dev/null 2>&1; then
+            CURRENT_VERSION=$(node -v | sed 's/^v//')
+            echo "current_node_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "current_node_version=none" >> $GITHUB_OUTPUT
+          fi
+          echo "required_node_version=${REQUIRED_NODE_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js ${{ env.REQUIRED_NODE_VERSION }}
+        if: steps.node-check.outputs.current_node_version != steps.node-check.outputs.required_node_version
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          node-version: ${{ env.REQUIRED_NODE_VERSION }}
 
       - name: Create Backend .env
         run: |
@@ -230,10 +263,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Check existing Node.js version
+        id: node-check
+        run: |
+          if command -v node >/dev/null 2>&1; then
+            CURRENT_VERSION=$(node -v | sed 's/^v//')
+            echo "current_node_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "current_node_version=none" >> $GITHUB_OUTPUT
+          fi
+          echo "required_node_version=${REQUIRED_NODE_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js ${{ env.REQUIRED_NODE_VERSION }}
+        if: steps.node-check.outputs.current_node_version != steps.node-check.outputs.required_node_version
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ env.REQUIRED_NODE_VERSION }}
 
       - name: Check for Secrets
         run: |
