@@ -76,14 +76,15 @@ export function FormDatePicker({
             <View
               style={{
                 backgroundColor: "#1f2937",
-                border: error ? "1px solid #f87171" : "1px solid #374151",
-                borderRadius: "12px",
+                borderWidth: error ? 1 : 1,
+                borderColor: error ? "#f87171" : "#374151",
+                borderRadius: 12,
                 paddingHorizontal: 16,
                 paddingVertical: 14,
                 justifyContent: "center",
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: "16px" }}>
+              <Text style={{ color: "#ffffff", fontSize: 16 }}>
                 {formatDateForDisplay(value)}
               </Text>
             </View>
