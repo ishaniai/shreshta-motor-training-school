@@ -67,7 +67,7 @@ jobs:
           TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
-          NOTIFY_WHATSAPP_TO=whatsapp:${{ secrets.NOTIFY_WHATSAPP_TO_NUM }}
+          NOTIFY_WHATSAPP_TO=${{ secrets.NOTIFY_WHATSAPP_TO }}
           
           # CORS Configuration
           CORS_ORIGINS=http://localhost:3000,http://192.168.0.168:3000,https://yourdomain.com
