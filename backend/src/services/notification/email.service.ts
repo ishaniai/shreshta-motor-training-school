@@ -73,7 +73,7 @@ async function sendWithSmtp(input: SendEmailInput): Promise<void> {
   });
 }
 
-async function dispatchEmail(input: SendEmailInput): Promise<void> {
+export async function dispatchEmail(input: SendEmailInput): Promise<void> {
   const provider = env.emailProvider;
 
   if (provider === "none") {

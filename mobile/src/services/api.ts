@@ -21,7 +21,7 @@ async function request<T>(
 ): Promise<T> {
   const url = `${API_URL.replace(/\/$/, "")}${path}`;
   console.log("[api] Requesting:", url);
-  
+
   let response: Response;
   const { token, ...fetchOptions } = options ?? {};
 
@@ -42,32 +42,17 @@ async function request<T>(
     );
   }
 
-  let data: T & {
-    message?: string;
-    field?: string;
-  };
+  let data: T & { message?: string; field?: string };
 
   try {
-    data = (await response.json()) as T & {
-      message?: string;
-      field?: string;
-    };
+    data = (await response.json()) as T & { message?: string; field?: string };
     console.log("[api] Response OK:", { status: response.status, data });
-  } catch (err) {
-    console.warn("[api] Failed to parse JSON response:", err);
-    data = {} as T & {
-      message?: string;
-      field?: string;
-    };
+  } catch {
+    data = {} as T & { message?: string; field?: string };
   }
 
   if (!response.ok) {
-    console.error(
-      `[api] Request failed: ${response.status} ${response.statusText}`,
-      `URL: ${url}`,
-      `Response:`,
-      data
-    );
+    console.error(`[api] Request failed: ${response.status}`, `URL: ${url}`, data);
     throw new ApiError(
       (data as { message?: string }).message ?? "Request failed",
       response.status,
@@ -78,6 +63,8 @@ async function request<T>(
   return data;
 }
 
+/* ── Auth ──────────────────────────────────────────────── */
+
 export interface UsernameAvailabilityResponse {
   available: boolean;
   message: string;
@@ -87,12 +74,9 @@ export async function checkUsernameAvailable(
   username: string
 ): Promise<UsernameAvailabilityResponse> {
   const params = new URLSearchParams({ username: username.trim() });
-  return request<UsernameAvailabilityResponse>(
-    `/api/auth/username-available?${params.toString()}`
-  );
+  return request<UsernameAvailabilityResponse>(`/api/auth/username-available?${params.toString()}`);
 }
 
-/** ISO date YYYY-MM-DD for Postgres */
 export function formatDateForApi(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -104,7 +88,6 @@ export function formToRegisterPayload(form: RegistrationFormState) {
   if (!form.dateOfBirth || form.hasDrivingLicense === null || !form.trainingInterest) {
     throw new Error("Incomplete form");
   }
-
   return {
     fullName: form.fullName.trim(),
     username: form.username.trim(),
@@ -117,12 +100,8 @@ export function formToRegisterPayload(form: RegistrationFormState) {
     state: form.state,
     dateOfBirth: formatDateForApi(form.dateOfBirth),
     hasDrivingLicense: form.hasDrivingLicense,
-    drivingLicenseNumber: form.hasDrivingLicense
-      ? form.drivingLicenseNumber.trim()
-      : undefined,
-    drivingLicenseCountry: form.hasDrivingLicense
-      ? form.drivingLicenseCountry
-      : undefined,
+    drivingLicenseNumber: form.hasDrivingLicense ? form.drivingLicenseNumber.trim() : undefined,
+    drivingLicenseCountry: form.hasDrivingLicense ? form.drivingLicenseCountry : undefined,
     trainingInterest: form.trainingInterest,
   };
 }
@@ -132,14 +111,9 @@ export interface RegisterResponse {
   message: string;
 }
 
-export async function registerUser(
-  form: RegistrationFormState
-): Promise<RegisterResponse> {
+export async function registerUser(form: RegistrationFormState): Promise<RegisterResponse> {
   const body = formToRegisterPayload(form);
-  return request<RegisterResponse>("/api/auth/register", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+  return request<RegisterResponse>("/api/auth/register", { method: "POST", body: JSON.stringify(body) });
 }
 
 export interface LoginResponse {
@@ -152,22 +126,85 @@ export interface LoginResponse {
 export async function loginUser(form: LoginFormState): Promise<LoginResponse> {
   return request<LoginResponse>("/api/auth/login", {
     method: "POST",
-    body: JSON.stringify({
-      usernameOrEmail: form.usernameOrEmail.trim(),
-      password: form.password,
-    }),
+    body: JSON.stringify({ usernameOrEmail: form.usernameOrEmail.trim(), password: form.password }),
   });
 }
 
 export async function fetchCurrentUser(token: string): Promise<{ user: SessionUser }> {
-  return request<{ success: boolean; user: SessionUser }>("/api/auth/me", {
+  return request<{ success: boolean; user: SessionUser }>("/api/auth/me", { token });
+}
+
+export function toAuthSession(response: LoginResponse): AuthSession {
+  return { token: response.token, user: response.user };
+}
+
+/* ── Appointments ──────────────────────────────────────── */
+
+export interface AppointmentPayload {
+  vehicleType: "2-wheeler" | "4-wheeler";
+  date: string;
+  timeSlot: string;
+}
+
+export interface Appointment {
+  id: string;
+  user_id: string;
+  vehicle_type: "2-wheeler" | "4-wheeler";
+  date: string;
+  time_slot: string;
+  status: "confirmed" | "cancelled";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AppointmentResponse {
+  success: boolean;
+  message: string;
+  appointment?: Appointment;
+}
+
+export async function bookAppointment(
+  payload: AppointmentPayload,
+  token: string
+): Promise<AppointmentResponse> {
+  return request<AppointmentResponse>("/api/appointments/book", {
+    method: "POST",
+    body: JSON.stringify(payload),
     token,
   });
 }
 
-export function toAuthSession(response: LoginResponse): AuthSession {
-  return {
-    token: response.token,
-    user: response.user,
-  };
+export async function getMyAppointments(token: string): Promise<Appointment[]> {
+  const res = await request<{ success: boolean; appointments: Appointment[] }>(
+    "/api/appointments/my",
+    { token }
+  );
+  return res.appointments;
+}
+
+export interface ReschedulePayload {
+  date: string;
+  timeSlot: string;
+}
+
+export async function rescheduleAppointment(
+  id: string,
+  payload: ReschedulePayload,
+  token: string
+): Promise<AppointmentResponse> {
+  return request<AppointmentResponse>(`/api/appointments/${id}/reschedule`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+    token,
+  });
+}
+
+export async function cancelAppointment(
+  id: string,
+  token: string
+): Promise<AppointmentResponse> {
+  return request<AppointmentResponse>(`/api/appointments/${id}/cancel`, {
+    method: "DELETE",
+    token,
+  });
 }

@@ -183,3 +183,17 @@ export async function getUserPublicProfile(userId: string) {
 
   return data;
 }
+
+export async function getUserContactDetails(userId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .select("id, username, full_name, email, contact_number")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Profile fetch failed: ${error.message}`);
+  }
+
+  return data;
+}

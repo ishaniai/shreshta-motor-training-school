@@ -7,21 +7,16 @@ interface ValidationMessageProps extends TextProps {
   variant?: Variant;
 }
 
-const variantClass: Record<Variant, string> = {
-  error: "text-signal-red text-sm mt-1",
-  success: "text-signal-green text-sm mt-1",
-  info: "text-accent-road text-sm mt-1",
+const variantStyle: Record<Variant, object> = {
+  error:   { color: "#F87171", fontSize: 12, marginTop: 4 },
+  success: { color: "#34D399", fontSize: 12, marginTop: 4 },
+  info:    { color: "#38BDF8", fontSize: 12, marginTop: 4 },
 };
 
-/** Inline validation text — red for errors, green for success */
-export function ValidationMessage({
-  message,
-  variant = "error",
-  ...rest
-}: ValidationMessageProps) {
+export function ValidationMessage({ message, variant = "error", ...rest }: ValidationMessageProps) {
   if (!message) return null;
   return (
-    <Text className={variantClass[variant]} accessibilityLiveRegion="polite" {...rest}>
+    <Text style={variantStyle[variant]} accessibilityLiveRegion="polite" {...rest}>
       {message}
     </Text>
   );

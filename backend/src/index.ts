@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import { env } from "./config/env";
+import { appointmentRouter } from "./routes/appointment.routes";
 import { authRouter } from "./routes/auth.routes";
 import { legalRouter } from "./routes/legal.routes";
 
@@ -14,7 +15,7 @@ app.use(
       env.corsOrigins.length > 0
         ? env.corsOrigins
         : true,
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 
@@ -24,6 +25,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/", legalRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/appointments", appointmentRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ message: "Not found" });
