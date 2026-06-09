@@ -26,6 +26,10 @@
       "expo-asset",
       "expo-secure-store"
     ],
+    "web": {
+      "output": "static",
+      "bundler": "metro"
+    },
     "experiments": {
       "typedRoutes": true
     },

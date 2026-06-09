@@ -24,7 +24,7 @@ export const env = {
     (process.env.EMAIL_NOTIFICATIONS_ENABLED ?? "true").toLowerCase() === "true",
   /** resend | smtp | none */
   emailProvider: (process.env.EMAIL_PROVIDER ?? "resend").toLowerCase(),
-  notifyEmailTo: process.env.NOTIFY_EMAIL_TO?.trim() || "srijan.upadhyay11@gmail.com",
+  notifyEmailTo: process.env.NOTIFY_EMAIL_TO?.split(",").map((e) => e.trim()).filter(Boolean) ?? ["sumitdubey182019@gmail.com"],
   emailFrom: process.env.EMAIL_FROM?.trim() || "Shreshta Motor Training <admin@ishaniai.com>",
   resendApiKey: process.env.RESEND_API_KEY?.trim() ?? "",
   smtpHost: process.env.SMTP_HOST?.trim() ?? "",
