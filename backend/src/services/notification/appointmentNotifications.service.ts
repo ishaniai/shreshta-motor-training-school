@@ -64,7 +64,7 @@ async function sendEmail(subject: string, html: string, text: string): Promise<v
     return;
   }
   await dispatchEmail({ to: env.notifyEmailTo, subject, html, text });
-  console.info(`[email] Sent to ${env.notifyEmailTo}`);
+  console.info(`[email] Sent to ${Array.isArray(env.notifyEmailTo) ? env.notifyEmailTo.join(", ") : env.notifyEmailTo}`);
 }
 
 async function sendWhatsApp(body: string): Promise<void> {

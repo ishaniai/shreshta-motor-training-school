@@ -10,7 +10,7 @@ import {
 } from "./registrationEmailTemplate";
 
 export interface SendEmailInput {
-  to: string;
+  to: string | string[];
   subject: string;
   html: string;
   text: string;
@@ -139,7 +139,7 @@ export async function sendRegistrationNotification(
       text: buildRegistrationEmailText(data),
     });
 
-    console.info(`[email] Registration notification sent to ${env.notifyEmailTo}`);
+    console.info(`[email] Registration notification sent to ${Array.isArray(env.notifyEmailTo) ? env.notifyEmailTo.join(", ") : env.notifyEmailTo}`);
   } catch (err) {
     console.error("[email] Failed to send registration notification:", err);
     throw err;
